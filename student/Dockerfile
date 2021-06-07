@@ -9,6 +9,5 @@ RUN apt-get update \
 # Speed up subsequent user package installation by pre-downloading package
 # cache and required packages.
 RUN apt-get update && apt-get -dy install nginx
-COPY docker-entrypoint.sh .
 
 EXPOSE 80 22
