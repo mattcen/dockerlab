@@ -20,5 +20,5 @@ RUN install -m 700 -d /root/.ssh
 RUN apt-get update && apt-get -dy install nginx
 
 EXPOSE 80 22
-CMD ["/usr/sbin/sshd", "-D"]
+CMD ["/usr/sbin/sshd", "-eD"]
 
