@@ -1,7 +1,0 @@
-#!/bin/bash
-
-for user in alice bob
-do
-  ssh-keygen -q -f keys/"$user" -N '' -C "$user"
-done
-chmod 600 keys/*.pub
