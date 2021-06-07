@@ -41,29 +41,3 @@ services:
     hostname: bastion
     volumes:
       - ./secrets:/root/secrets
-
-#  alice:
-#    image: mattcen/student
-#    build:
-#      context: student
-#    networks:
-#      - lab
-#    env_file: .env.global
-#    env_file: secrets/keys/alice.env
-#    hostname: h1234
-#    labels:
-#      - "traefik.http.routers.alice.rule=Host(`alice.docker.localhost`)"
-#      - "traefik.http.services.alice.loadbalancer.server.port=80"
-#
-#  bob:
-#    image: mattcen/student
-#    build:
-#      context: student
-#    networks:
-#      - lab
-#    env_file: .env.global
-#    env_file: secrets/keys/bob.env
-#    hostname: h5678
-#    labels:
-#      - "traefik.http.routers.bob.rule=Host(`bob.docker.localhost`)"
-#      - "traefik.http.services.bob.loadbalancer.server.port=80"
