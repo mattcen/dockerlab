@@ -15,5 +15,14 @@ docker run \
   mattcen/student
 }
 
+start_all_hosts(){
+while IFS=\| read -r u h p
+do
+  echo "Start host $h for user $u"
+  start_host "$u" "$h"
+done < secrets/users.psv
+}
+
 #start_host alice h1234
-start_host "$@"
+#start_host "$@"
+start_all_hosts
