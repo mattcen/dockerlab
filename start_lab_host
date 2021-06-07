@@ -20,6 +20,10 @@ while IFS=\| read -r u h p
 do
   echo "Start host $h for user $u"
   start_host "$u" "$h"
+
+  install -m 755 -d sshpiper/"$u"
+  printf "$u@$u:22" > sshpiper/"$u"/sshpiper_upstream
+  chmod 600 sshpiper/"$u"/sshpiper_upstream
 done < secrets/users.psv
 }
 

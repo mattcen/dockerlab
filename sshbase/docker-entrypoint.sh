@@ -5,21 +5,21 @@ then
   echo "$ROOT_AUTHORIZED_KEYS" > /root/.ssh/authorized_keys
 fi
 
-if [ -n "$AUTHORIZED_KEYS" ] && [ -n "$USERNAME" ]
+if [ -n "$USERNAME" ]
 then
   mkdir -p /data/home
   adduser --gecos "" --disabled-password "$USERNAME"
-  #install -o "$USERNAME" -g "$USERNAME" -m 700 -d /home/"$USERNAME"/.ssh
 
-  echo "$AUTHORIZED_KEYS" > /data/home/"$USERNAME"/.ssh/authorized_keys
-  #chown "$USERNAME": /home/"$USERNAME"/.ssh/authorized_keys
-  #adduser "$USERNAME" sudo
+  if [ -n "$AUTHORIZED_KEYS" ]
+  then
+    echo "$AUTHORIZED_KEYS" > /data/home/"$USERNAME"/.ssh/authorized_keys
+  fi
+  # Set the password to the same as the username
+  printf "$USERNAME\n$USERNAME\n" | passwd "$USERNAME"
 else
-  echo "Missing environment variables:"
+  echo "Missing environment variable(s):"
   echo "  USERNAME:        username of new user managing this container"
   echo "  AUTHORIZED_KEYS: ssh public key(s)"
-  #echo "Abnormal exit."
-  #exit 1
 fi
 
 mkdir -p /data/etc/ssh &&

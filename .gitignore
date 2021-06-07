@@ -1,3 +1,4 @@
 secrets/users.psv
 secrets/keys/
 .env.global
+sshpiper/

@@ -29,15 +29,12 @@ services:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
 
-  bastion:
-    image: mattcen/bastion
-    build:
-      context: bastion
+  sshpiper:
+    image: farmer1992/sshpiperd
     networks:
       - lab
     ports:
-      - "2222:22"
-    env_file: .env.global
-    hostname: bastion
+      - "2222:2222"
+    hostname: sshpiper
     volumes:
-      - ./secrets:/root/secrets
+      - ./sshpiper:/var/sshpiper
