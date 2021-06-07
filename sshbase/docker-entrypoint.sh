@@ -13,13 +13,19 @@ then
   if [ -n "$AUTHORIZED_KEYS" ]
   then
     echo "$AUTHORIZED_KEYS" > /data/home/"$USERNAME"/.ssh/authorized_keys
+    unset AUTHORIZED_KEYS
   fi
-  # Set the password to the same as the username
-  printf "$USERNAME\n$USERNAME\n" | passwd "$USERNAME"
+  if [ -n "$PWHASH" ]
+  then
+    printf "$USERNAME:$PWHASH" | chpasswd -e
+    unset PWHASH
+  fi
+  unset USERNAME
 else
   echo "Missing environment variable(s):"
   echo "  USERNAME:        username of new user managing this container"
   echo "  AUTHORIZED_KEYS: ssh public key(s)"
+  echo "  PWHASH:          hash of user's desired password"
 fi
 
 mkdir -p /data/etc/ssh &&
