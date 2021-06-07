@@ -1,0 +1,19 @@
+#!/bin/bash
+
+start_host() {
+USERNAME=$1
+HOST=$2
+docker run \
+  -d \
+  --name "$USERNAME" \
+  --mount type=volume,source="${USERNAME}_data",destination=/data \
+  --network lab \
+  --hostname "$HOST" \
+  --env-file secrets/keys/"$USERNAME".env \
+  --label "traefik.http.routers.$USERNAME.rule=Host(\`$USERNAME.docker.localhost\`)" \
+  --label "traefik.http.services.$USERNAME.loadbalancer.server.port=80" \
+  mattcen/student
+}
+
+#start_host alice h1234
+start_host "$@"
