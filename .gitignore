@@ -12,3 +12,4 @@ student/skel/.vscode-server/data/*
 !student/skel/.vscode-server/data/Machine/
 student/skel/.vscode-server/data/Machine/*
 !student/skel/.vscode-server/data/Machine/settings.json
+lab_homes/

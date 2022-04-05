@@ -1,13 +1,17 @@
 #!/bin/bash
 
+#lab_homes=/srv/lab_homes
+lab_homes="$PWD"/lab_homes
+
 start_host() (
 USERNAME=$1
 HOST=$2
 PWHASH=$3
+# --mount type=volume,source="${USERNAME}_data",destination=/data,volume-label=lab.user="$USERNAME" \
 docker run \
   -d \
   --name "$USERNAME" \
-  --mount type=volume,source="${USERNAME}_data",destination=/data,volume-label=lab.user="$USERNAME" \
+  --volume "$lab_homes/$USERNAME:/data/home/$USERNAME" \
   --network lab \
   --hostname "$HOST" \
   --env PWHASH="$PWHASH" \
