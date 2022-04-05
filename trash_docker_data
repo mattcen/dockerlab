@@ -12,10 +12,18 @@ containers=()
   while read -r c
     do containers+=("$c")
   done < <(docker container ls --filter label=lab.user --format {{.Names}})
-docker container rm -f "${containers[@]}"
+  if (( ${#containers[@]} ))
+  then
+    echo "# Removing containers:"
+    docker container rm -f "${containers[@]}"
+  fi
 
 volumes=()
   while read -r v
     do volumes+=("$v")
   done < <(docker volume ls --filter label=lab.user --format {{.Name}})
-docker volume rm "${volumes[@]}"
+  if (( ${#volumes[@]} ))
+  then
+    echo "# Removing volumes:"
+    docker volume rm "${volumes[@]}"
+  fi
