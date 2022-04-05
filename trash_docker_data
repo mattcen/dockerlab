@@ -1,0 +1,21 @@
+#!/bin/bash
+
+read -rp $'This will delete all docker container and volume data for lab users.\nType "yes" if you are sure you want to do this: ' reply
+
+if [[ $reply != 'yes' ]]
+then
+  echo "Aborting."
+  exit 1
+fi
+
+containers=()
+  while read -r c
+    do containers+=("$c")
+  done < <(docker container ls --filter label=lab.user --format {{.Names}})
+docker container rm -f "${containers[@]}"
+
+volumes=()
+  while read -r v
+    do volumes+=("$v")
+  done < <(docker volume ls --filter label=lab.user --format {{.Name}})
+docker volume rm "${volumes[@]}"
