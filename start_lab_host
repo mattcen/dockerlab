@@ -7,12 +7,13 @@ PWHASH=$3
 docker run \
   -d \
   --name "$USERNAME" \
-  --mount type=volume,source="${USERNAME}_data",destination=/data \
+  --mount type=volume,source="${USERNAME}_data",destination=/data,volume-label=scouthack.lab.user="$USERNAME" \
   --network lab \
   --hostname "$HOST" \
   --env PWHASH="$PWHASH" \
   --env-file secrets/keys/"$USERNAME".env \
-  --label "traefik.http.routers.$USERNAME.rule=Host(\`$USERNAME.docker.localhost\`)" \
+  --label "scouthack.lab.user=$USERNAME" \
+  --label "traefik.http.routers.$USERNAME.rule=Host(\`$USERNAME.inga.local\`)" \
   --label "traefik.http.services.$USERNAME.loadbalancer.server.port=80" \
   mattcen/student
 )
@@ -22,7 +23,7 @@ while IFS=\| read -r user hostname password
 do
   hash=$(docker run --rm alpine mkpasswd "$password")
   echo "Start host $hostname for user $user"
-  start_host "$user" "$host" "$hash"
+  start_host "$user" "$hostname" "$hash"
   install -m 755 -d sshpiper/"$user"
   printf "$user@$user:22" > sshpiper/"$user"/sshpiper_upstream
   chmod 600 sshpiper/"$user"/sshpiper_upstream

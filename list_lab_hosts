@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker container ls -a --filter label=scouthack.lab.user "$@"

@@ -8,18 +8,18 @@ services:
 
   reverse-proxy:
     # The official v2 Traefik docker image
-    image: traefik:v2.2
+    image: traefik:v2.6.3
     # Enables the web UI and tells Traefik to listen to docker
     command: --api.insecure=true --providers.docker
     networks:
       - lab
     ports:
       # The HTTP port
-      - "80:80"
+      - 80:80
       # The Web UI (enabled by --api.insecure=true)
-      - "8080:8080"
+      - 8080:8080
     labels:
-      traefik.enable: "true"
+      traefik.enable: true
       traefik.http.routers.api.rule: Host(`traefik.${TOP_DOMAIN:-docker.localhost}`)
       traefik.http.routers.api.service: api@internal
       traefik.http.routers.api.middlewares: auth
@@ -34,7 +34,7 @@ services:
     networks:
       - lab
     ports:
-      - "2222:2222"
+      - 2222:2222
     hostname: sshpiper
     volumes:
       - ./sshpiper:/var/sshpiper
