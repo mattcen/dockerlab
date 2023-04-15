@@ -37,7 +37,7 @@ do
   hash=$(docker run --rm alpine mkpasswd "$password")
   echo "Start host $hostname for user $user"
   start_host "$user" "$hostname" "$hash"
-done < secrets/users.psv
+done < <(grep -Ev "^[[:space:]]*(#|$)" secrets/users.psv)
 }
 
 #start_host alice h1234
