@@ -32,7 +32,7 @@ services:
     restart: unless-stopped
 
   sshpiper:
-    image: farmer1992/sshpiperd
+    image: farmer1992/sshpiperd@sha256:961d9e3b4e2a7f3a872638c9cd4efe631dec1b88e4804f783695029567d21183
     networks:
       - lab
     ports:
