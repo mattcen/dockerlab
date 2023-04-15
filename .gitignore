@@ -15,3 +15,4 @@ sshbase/skel/.vscode-server/data/*
 sshbase/skel/.vscode-server/data/Machine/*
 !sshbase/skel/.vscode-server/data/Machine/settings.json
 lab_homes/
+vscode_bin/
