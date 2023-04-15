@@ -8,9 +8,16 @@ services:
 
   reverse-proxy:
     # The official v2 Traefik docker image
-    image: traefik:v2.6.3
+    image: traefik:v2.9
     # Enables the web UI and tells Traefik to listen to docker
-    command: --api.insecure=true --providers.docker
+    command:
+      - --providers.docker
+      - --providers.docker.network=lab
+      - --providers.docker.watch
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.defaultRule=Host(`{{ index .Labels "com.docker.stack.namespace" }}.scouthack`)
+      - --api.insecure=true
+      - --entryPoints.web.address=:80
     networks:
       - lab
     ports:
