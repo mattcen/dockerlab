@@ -30,7 +30,6 @@ fi
 
 mkdir -p /data/etc/ssh &&
   ssh-keygen -A -f /data
-#sshd -eD
 
 # Execute the CMD from the Dockerfile:
 exec "$@"

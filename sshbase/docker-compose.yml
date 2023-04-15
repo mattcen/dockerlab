@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+
+  sshbase:
+    image: localhost/sshbase
+    build:
+      context: .
+      target: sshbase
+
+  sshprivileged:
+    image: localhost/sshprivileged
+    build:
+      context: .
+      target: sshprivileged
+
+  student:
+    image: localhost/student
+    build:
+      context: .
+      target: student

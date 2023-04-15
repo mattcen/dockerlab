@@ -5,11 +5,11 @@ sshpiper/
 
 # Exclude vscode-server (~700MB),
 # but re-include the custom settings file
-!student/skel/.vscode-server/
-student/skel/.vscode-server/*
-!student/skel/.vscode-server/data/
-student/skel/.vscode-server/data/*
-!student/skel/.vscode-server/data/Machine/
-student/skel/.vscode-server/data/Machine/*
-!student/skel/.vscode-server/data/Machine/settings.json
+!sshbase/skel/.vscode-server/
+sshbase/skel/.vscode-server/*
+!sshbase/skel/.vscode-server/data/
+sshbase/skel/.vscode-server/data/*
+!sshbase/skel/.vscode-server/data/Machine/
+sshbase/skel/.vscode-server/data/Machine/*
+!sshbase/skel/.vscode-server/data/Machine/settings.json
 lab_homes/
