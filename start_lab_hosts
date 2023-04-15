@@ -17,8 +17,9 @@ docker run \
   --env PWHASH="$PWHASH" \
   --env-file secrets/keys/"$USERNAME".env \
   --label "lab.user=$USERNAME" \
-  --label "traefik.http.routers.$USERNAME.rule=Host(\`$USERNAME.inga.local\`)" \
+  --label "traefik.http.routers.$USERNAME.rule=Host(\`$USERNAME.scouthack\`)" \
   --label "traefik.http.services.$USERNAME.loadbalancer.server.port=80" \
+  --restart unless-stopped \
   mattcen/student
 )
 

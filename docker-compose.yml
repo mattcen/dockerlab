@@ -15,12 +15,13 @@ services:
       - lab
     ports:
       # The HTTP port
-      - 80:80
+      - 192.168.1.1:80:80
       # The Web UI (enabled by --api.insecure=true)
-      - 8080:8080
+      #- 8080:8080
     labels:
       traefik.enable: true
-      traefik.http.routers.api.rule: Host(`traefik.${TOP_DOMAIN:-docker.localhost}`)
+      #traefik.http.routers.api.rule: Host(`traefik.${TOP_DOMAIN:-docker.localhost}`)
+      traefik.http.routers.api.rule: Host(`traefik.scouthack`)
       traefik.http.routers.api.service: api@internal
       traefik.http.routers.api.middlewares: auth
       # sample users/password test/test and test2/test2
@@ -28,13 +29,16 @@ services:
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
 
   sshpiper:
     image: farmer1992/sshpiperd
     networks:
       - lab
     ports:
-      - 2222:2222
+      - 192.168.1.1:22:2222
     hostname: sshpiper
     volumes:
       - ./sshpiper:/var/sshpiper
+      - ./secrets/sshpiper:/etc/ssh/ssh_host_rsa_key
+    restart: unless-stopped
