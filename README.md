@@ -3,5 +3,5 @@
 
 ```sh
 docker network create --attachable lab
-docker compsoe up -d
+docker compose up -d
 ```
