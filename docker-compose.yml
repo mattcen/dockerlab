@@ -22,8 +22,7 @@ services:
       - lab
     ports:
       # The HTTP port
-      - 192.168.1.1:80:80
-      - 127.0.0.1:80:80
+      - 80:80
       # The Web UI (enabled by --api.insecure=true)
       #- 8080:8080
     labels:
@@ -44,8 +43,7 @@ services:
     networks:
       - lab
     ports:
-      - 192.168.1.1:22:2222
-      - 127.0.0.1:22:2222
+      - 22:2222
     hostname: sshpiper
     environment:
       PLUGIN: docker
