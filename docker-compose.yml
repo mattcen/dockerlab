@@ -49,7 +49,7 @@ services:
     hostname: sshpiper
     environment:
       PLUGIN: docker
-      SSHPIPERD_LOG_LEVEL: trace
+      #SSHPIPERD_LOG_LEVEL: trace
     #command: "/sshpiperd/sshpiperd --log-level=trace /sshpiperd/plugins/docker"
     volumes:
       - ./sshpiper:/var/sshpiper
