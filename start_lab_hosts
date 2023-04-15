@@ -12,6 +12,7 @@ docker run \
   -d \
   --name "$USERNAME" \
   --volume "$lab_homes/$USERNAME:/data/home/$USERNAME" \
+  --volume "$PWD/vscode_bin:/data/home/$USERNAME/.vscode-server/bin" \
   --network lab \
   --hostname "$HOST" \
   --env PWHASH="$PWHASH" \
