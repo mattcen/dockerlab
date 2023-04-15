@@ -44,13 +44,12 @@ RUN printf 'tzdata %s select %s\n' tzdata/Areas "${TZ%/*}" tzdata/Zones/"${TZ%/*
 
 RUN apt-get update \
   && apt-get install -y \
-  vim less dialog tzdata man busybox nano git python3-venv python-is-python3 \
+  vim less dialog tzdata man busybox nano git python3-venv python-is-python3 auto-apt-proxy \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
-# Speed up subsequent user package installation by pre-downloading package
-# cache and required packages.
-RUN apt-get update && apt-get -dy install nginx apache2 php
+# Speed up subsequent user package installation by pre-downloading package cache
+RUN apt-get update
 
 COPY skel/ /etc/skel/
 
