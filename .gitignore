@@ -1,5 +1,7 @@
 secrets/users.psv
 secrets/keys/
+secrets/ssh_host_ed25519_key
+secrets/ssh_host_ed25519_key.pub
 .env.global
 sshpiper/
 

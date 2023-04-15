@@ -28,17 +28,23 @@ services:
       traefik.http.middlewares.auth.basicauth.users: test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/,test2:$$apr1$$d9hr9HBB$$4HxwgUir3HP4EsggP/QNo0
     volumes:
       # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 
   sshpiper:
-    image: farmer1992/sshpiperd@sha256:961d9e3b4e2a7f3a872638c9cd4efe631dec1b88e4804f783695029567d21183
+    image: farmer1992/sshpiperd:full-v1.0.101
     networks:
       - lab
     ports:
       - 192.168.1.1:22:2222
     hostname: sshpiper
+    environment:
+      PLUGIN: docker
+      SSHPIPERD_LOG_LEVEL: trace
+    #command: "/sshpiperd/sshpiperd --log-level=trace /sshpiperd/plugins/docker"
     volumes:
       - ./sshpiper:/var/sshpiper
-      - ./secrets/sshpiper:/etc/ssh/ssh_host_rsa_key
+      - ./secrets/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
+      # So that sshpiper can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped

@@ -18,7 +18,10 @@ docker run \
   --env-file secrets/keys/"$USERNAME".env \
   --label "lab.user=$USERNAME" \
   --label "traefik.http.routers.$USERNAME.rule=Host(\`$USERNAME.scouthack\`)" \
+  --label "traefik.http.routers.$USERNAME.service=$USERNAME" \
   --label "traefik.http.services.$USERNAME.loadbalancer.server.port=80" \
+  --label "sshpiper.username=$USERNAME" \
+  --label "sshpiper.port=22" \
   --restart unless-stopped \
   mattcen/student
 )
@@ -29,9 +32,6 @@ do
   hash=$(docker run --rm alpine mkpasswd "$password")
   echo "Start host $hostname for user $user"
   start_host "$user" "$hostname" "$hash"
-  install -m 755 -d sshpiper/"$user"
-  printf "$user@$user:22" > sshpiper/"$user"/sshpiper_upstream
-  chmod 600 sshpiper/"$user"/sshpiper_upstream
 done < secrets/users.psv
 }
 
