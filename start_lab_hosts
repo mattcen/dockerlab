@@ -8,6 +8,14 @@ USERNAME=$1
 HOST=$2
 PWHASH=$3
 # --mount type=volume,source="${USERNAME}_data",destination=/data,volume-label=lab.user="$USERNAME" \
+# Pre-create the user's home-dir if it doesn't already exist
+test -d "$lab_homes/$USERNAME" || docker run \
+  --rm \
+  --volume "$lab_homes:/data/home" \
+  --env PWHASH="$PWHASH" \
+  --env-file secrets/keys/"$USERNAME".env \
+  mattcen/student true
+# Start their main container
 docker run \
   -d \
   --name "$USERNAME" \
