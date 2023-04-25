@@ -18,11 +18,23 @@ services:
       - --providers.docker.defaultRule=Host(`{{ index .Labels "com.docker.stack.namespace" }}.scouthack`)
       - --api.insecure=true
       - --entryPoints.web.address=:80
+      - --entryPoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls=true
+      #- --accesslog
+      #- --log.level=DEBUG
+      #- --entrypoints.websecure.http.tls.certresolver=default
+    hostname: traefik.scouthack
     networks:
-      - lab
+      lab:
+        aliases:
+          - git.scouthack
+          - files.scouthack
+          - cdn.scouthack
+
     ports:
       # The HTTP port
       - 80:80
+      - 443:443
       # The Web UI (enabled by --api.insecure=true)
       #- 8080:8080
     labels:
@@ -35,7 +47,7 @@ services:
       traefik.http.middlewares.auth.basicauth.users: test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/,test2:$$apr1$$d9hr9HBB$$4HxwgUir3HP4EsggP/QNo0
     volumes:
       # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /run/user/1004/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 
   sshpiper:
@@ -53,5 +65,73 @@ services:
       - ./sshpiper:/var/sshpiper
       - ./secrets/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
       # So that sshpiper can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /run/user/1004/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
+
+  files:
+    image: nginx
+    networks:
+      - lab
+    volumes:
+      - ./files:/usr/share/nginx/html:ro
+    restart: unless-stopped
+
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.files.rule: Host(`files.scouthack`,`www.scouthack`,`cdn.scouthack`,`course.scouthack`)
+      traefik.http.routers.files.entryPoints: web
+      traefik.http.services.files.loadbalancer.server.port: 80
+      traefik.http.services.files.loadbalancer.sticky: "true"
+
+  screego:
+    image: ghcr.io/screego/server:1.8.1
+    #network_mode: host
+    networks:
+      - lab
+    environment:
+      SCREEGO_EXTERNAL_IP: "192.168.1.1"
+      SCREEGO_USERS_FILE: "/screego-users.txt"
+      #SCREEGO_AUTH_MODE: turn
+      #SCREEGO_LOG_LEVEL: debug
+    volumes:
+      - ./screego-users.txt:/screego-users.txt
+    restart: unless-stopped
+
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.screego.rule: Host(`cast.scouthack`)
+      #traefik.http.routers.screego.entryPoints: web
+      traefik.http.services.screego.loadbalancer.server.port: 5050
+      traefik.http.services.screego.loadbalancer.sticky: "true"
+
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:1.19.1-0
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__server__SSH_PORT=222
+    restart: unless-stopped
+    networks:
+      - lab
+    volumes:
+      - ./gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "222:22"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.forgejo.rule: Host(`git.scouthack`)
+      #traefik.http.routers.forgejo.entryPoints: web
+      traefik.http.services.forgejo.loadbalancer.server.port: 3000
+      traefik.http.services.forgejo.loadbalancer.sticky: "true"
+
+  #dnsmasq:
+  #  build: ./dnsmasq
+  #  restart: unless-stopped
+  #  network_mode: "host"
+  #  #command: sleep 600
+  #  cap_add:
+  #    - NET_ADMIN
+  #  volumes:
+  #    - ./dnsmasq.conf:/etc/dnsmasq.conf:ro
