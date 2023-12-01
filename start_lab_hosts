@@ -4,6 +4,9 @@
 lab_homes="$PWD"/lab_homes
 share="$PWD"/share
 
+# Generate any missing SSH keys
+(cd secrets && ./genkeys)
+
 start_host() (
 USERNAME=$1
 HOST=$2
