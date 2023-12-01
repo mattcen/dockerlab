@@ -44,7 +44,7 @@ RUN printf 'tzdata %s select %s\n' tzdata/Areas "${TZ%/*}" tzdata/Zones/"${TZ%/*
 
 RUN apt-get update \
   && apt-get install -y \
-  vim less dialog tzdata man busybox nano git python3-venv python-is-python3 auto-apt-proxy jq \
+  vim tmux screen less dialog tzdata man busybox nano git python3-venv python-is-python3 auto-apt-proxy jq \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
