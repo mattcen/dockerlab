@@ -9,13 +9,14 @@ services:
   reverse-proxy:
     # The official v2 Traefik docker image
     image: traefik:v2.9
+    env_file: .env
     # Enables the web UI and tells Traefik to listen to docker
     command:
       - --providers.docker
       - --providers.docker.network=lab
       - --providers.docker.watch
       - --providers.docker.exposedByDefault=false
-      - --providers.docker.defaultRule=Host(`{{ index .Labels "com.docker.stack.namespace" }}.scouthack`)
+      - --providers.docker.defaultRule=Host(`{{ index .Labels "com.docker.stack.namespace" }}.${TOP_DOMAIN}`)
       - --api.insecure=true
       - --entryPoints.web.address=:80
       - --entryPoints.websecure.address=:443
@@ -23,13 +24,13 @@ services:
       #- --accesslog
       #- --log.level=DEBUG
       #- --entrypoints.websecure.http.tls.certresolver=default
-    hostname: traefik.scouthack
+    hostname: traefik.${TOP_DOMAIN}
     networks:
       lab:
         aliases:
-          - git.scouthack
-          - files.scouthack
-          - cdn.scouthack
+          - git.${TOP_DOMAIN}
+          - files.${TOP_DOMAIN}
+          - cdn.${TOP_DOMAIN}
 
     ports:
       # The HTTP port
@@ -39,23 +40,26 @@ services:
       #- 8080:8080
     labels:
       traefik.enable: true
-      #traefik.http.routers.api.rule: Host(`traefik.${TOP_DOMAIN:-docker.localhost}`)
-      traefik.http.routers.api.rule: Host(`traefik.scouthack`)
+      #traefik.http.routers.api.rule: Host(`traefik.${TOP_DOMAIN:-docker.${TOP_DOMAIN}}`)
+      traefik.http.routers.api.rule: Host(`traefik.${TOP_DOMAIN}`)
       traefik.http.routers.api.service: api@internal
       traefik.http.routers.api.middlewares: auth
       # sample users/password test/test and test2/test2
       traefik.http.middlewares.auth.basicauth.users: test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/,test2:$$apr1$$d9hr9HBB$$4HxwgUir3HP4EsggP/QNo0
     volumes:
       # So that Traefik can listen to the Docker events
-      - /run/user/1004/docker.sock:/var/run/docker.sock:ro
+      #- /run/user/1004/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 
   sshpiper:
     image: farmer1992/sshpiperd:full-v1.0.101
+    env_file: .env
     networks:
       - lab
     ports:
-      - 22:2222
+      #- 127.0.0.1:2222:2222
+      - 2222:2222
     hostname: sshpiper
     environment:
       PLUGIN: docker
@@ -63,13 +67,17 @@ services:
     #command: "/sshpiperd/sshpiperd --log-level=trace /sshpiperd/plugins/docker"
     volumes:
       - ./sshpiper:/var/sshpiper
-      - ./secrets/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
+      #- ./secrets/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
+      - ./secrets/sshpiper_keys:/etc/ssh
+      #- ./secrets:/etc/ssh
       # So that sshpiper can listen to the Docker events
-      - /run/user/1004/docker.sock:/var/run/docker.sock:ro
+      #- /run/user/1004/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 
   files:
     image: nginx
+    env_file: .env
     networks:
       - lab
     volumes:
@@ -78,50 +86,51 @@ services:
 
     labels:
       traefik.enable: "true"
-      traefik.http.routers.files.rule: Host(`files.scouthack`,`www.scouthack`,`cdn.scouthack`,`course.scouthack`)
+      traefik.http.routers.files.rule: Host(`files.${TOP_DOMAIN}`,`www.${TOP_DOMAIN}`,`cdn.${TOP_DOMAIN}`,`course.${TOP_DOMAIN}`)
       traefik.http.routers.files.entryPoints: web
       traefik.http.services.files.loadbalancer.server.port: 80
       traefik.http.services.files.loadbalancer.sticky: "true"
 
   screego:
     image: ghcr.io/screego/server:1.8.1
-    #network_mode: host
+    env_file: .env
     networks:
       - lab
     environment:
       SCREEGO_EXTERNAL_IP: "192.168.1.1"
-      SCREEGO_USERS_FILE: "/screego-users.txt"
+      SCREEGO_USERS_FILE: "/data/screego-users.txt"
       #SCREEGO_AUTH_MODE: turn
       #SCREEGO_LOG_LEVEL: debug
     volumes:
-      - ./screego-users.txt:/screego-users.txt
+      - ./screego:/data
     restart: unless-stopped
 
     labels:
       traefik.enable: "true"
-      traefik.http.routers.screego.rule: Host(`cast.scouthack`)
+      traefik.http.routers.screego.rule: Host(`cast.${TOP_DOMAIN}`)
       #traefik.http.routers.screego.entryPoints: web
       traefik.http.services.screego.loadbalancer.server.port: 5050
       traefik.http.services.screego.loadbalancer.sticky: "true"
 
   forgejo:
     image: codeberg.org/forgejo/forgejo:1.19.1-0
+    env_file: .env
     environment:
       - USER_UID=1000
       - USER_GID=1000
-      - GITEA__server__SSH_PORT=222
+      - FORGEJO__server__SSH_PORT=222
     restart: unless-stopped
     networks:
       - lab
     volumes:
-      - ./gitea:/data
+      - ./forgejo:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     ports:
       - "222:22"
     labels:
       traefik.enable: "true"
-      traefik.http.routers.forgejo.rule: Host(`git.scouthack`)
+      traefik.http.routers.forgejo.rule: Host(`git.${TOP_DOMAIN}`)
       #traefik.http.routers.forgejo.entryPoints: web
       traefik.http.services.forgejo.loadbalancer.server.port: 3000
       traefik.http.services.forgejo.loadbalancer.sticky: "true"
