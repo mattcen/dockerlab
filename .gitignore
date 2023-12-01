@@ -2,7 +2,7 @@ secrets/users.psv
 secrets/keys/
 secrets/ssh_host_ed25519_key
 secrets/ssh_host_ed25519_key.pub
-.env.global
+.env
 sshpiper/
 
 # Exclude vscode-server (~700MB),
@@ -16,3 +16,9 @@ sshbase/skel/.vscode-server/data/Machine/*
 !sshbase/skel/.vscode-server/data/Machine/settings.json
 lab_homes/
 .cache/
+files/
+gitea/
+share/
+forgejo/
+screego/
+secrets/sshpiper_keys/
