@@ -1,0 +1,4 @@
+#!/bin/bash
+docker build -t mattcen/sshbase --target sshbase sshbase/
+docker build -t mattcen/sshprivileged --target sshprivileged sshbase/
+docker build -t mattcen/student --target student sshbase/
