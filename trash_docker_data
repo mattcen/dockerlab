@@ -11,7 +11,7 @@ fi
 containers=()
   while read -r c
     do containers+=("$c")
-  done < <(docker container ls --filter label=lab.user --format {{.Names}})
+  done < <(docker container ls -a --filter label=lab.user --format {{.Names}})
   if (( ${#containers[@]} ))
   then
     echo "# Removing containers:"

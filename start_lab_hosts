@@ -35,7 +35,6 @@ docker run \
   --volume "$lab_homes/$USERNAME:/data/home/$USERNAME" \
   --volume "$PWD/.cache/vscode_bin:/data/home/$USERNAME/.vscode-server/bin" \
   --volume "$PWD/.cache/pip:/data/home/$USERNAME/.cache/pip" \
-  --volume "$PWD/share:/data/home/$USERNAME/code/share${permission}" \
   --network lab \
   --hostname "$HOST" \
   --env PWHASH="$PWHASH" \
@@ -52,6 +51,7 @@ docker run \
   --label "sshpiper.port=22" \
   --restart unless-stopped \
   mattcen/student
+  #--volume "$PWD/share:/data/home/$USERNAME/code/share${permission}" \
   #--label "sshpiper.authorized_keys=$(cat secrets/keys/$USERNAME.pub 2>/dev/null || :)" \
   #--label "sshpiper.private_key=$(cat secrets/keys/$USERNAME)" \
 )
